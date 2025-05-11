@@ -63,9 +63,7 @@ const MainNav: React.FC = () => {
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center space-x-2">
             <CircleDollarSign className="h-6 w-6 text-dfcuGreen" />
-            <span className="text-xl font-bold text-dfcuBlue">
-              dfcu SwiftPay
-            </span>
+            <span className="text-xl font-bold text-dfcuBlue">dfcu PayGat</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -130,7 +128,7 @@ const MainNav: React.FC = () => {
             <SheetHeader className="mb-4">
               <SheetTitle className="flex items-center gap-2">
                 <CircleDollarSign className="h-5 w-5 text-dfcuGreen" />
-                <span>dfcu SwiftPay</span>
+                <span>dfcu PayGat</span>
               </SheetTitle>
             </SheetHeader>
             <nav className="flex flex-col gap-4">

@@ -114,7 +114,7 @@ const LoginForm: React.FC = () => {
           Welcome Back
         </CardTitle>
         <CardDescription className="text-center">
-          Sign in to your dfcu SwiftPay account
+          Sign in to your dfcu PayGat account
         </CardDescription>
       </CardHeader>
       <CardContent>

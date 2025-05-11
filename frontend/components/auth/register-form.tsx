@@ -135,7 +135,7 @@ const RegisterForm: React.FC = () => {
           Create an Account
         </CardTitle>
         <CardDescription className="text-center">
-          Enter your details to create your dfcu SwiftPay account
+          Enter your details to create your dfcu PayGat account
         </CardDescription>
       </CardHeader>
       <CardContent>
