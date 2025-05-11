@@ -16,50 +16,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-#   backend:
-#     build:
-#       context: ./backend
-#       dockerfile: Dockerfile
-#     depends_on:
-#       postgres:
-#         condition: service_healthy
-#     environment:
-#       NODE_ENV: ${NODE_ENV:-development}
-#       PORT: 3001
-#       DATABASE_HOST: postgres
-#       DATABASE_PORT: 5432
-#       DATABASE_USERNAME: ${DATABASE_USERNAME:-postgres}
-#       DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
-#       DATABASE_NAME: ${DATABASE_NAME:-dfcu_payments}
-#       JWT_SECRET: ${JWT_SECRET:-your_secure_jwt_secret_here}
-#       JWT_EXPIRATION: ${JWT_EXPIRATION:-86400}
-#       REDIS_HOST: redis
-#       REDIS_PORT: 6379
-#       REDIS_PASSWORD: ${REDIS_PASSWORD:-redis_password}
-#     ports:
-#       - "3001:3001"
-#     volumes:
-#       - ./backend:/usr/src/app
-#       - /usr/src/app/node_modules
-#     command: npm run start:dev
-
-#   frontend:
-#     build:
-#       context: ./frontend
-#       dockerfile: Dockerfile
-#     depends_on:
-#       - backend
-#     environment:
-#       NODE_ENV: ${NODE_ENV:-development}
-#       NEXT_PUBLIC_API_BASE_URL: http://backend:3001
-#       BACKEND_API_URL: http://backend:3001/api/v1
-#       NEXT_PUBLIC_BACKEND_URL: http://backend:3001/api/v1
-#     ports:
-#       - "3000:3000"
-#     volumes:
-#       - ./frontend:/usr/src/app
-#       - /usr/src/app/node_modules
-#     command: npm run dev
 
 volumes:
   postgres_data:
