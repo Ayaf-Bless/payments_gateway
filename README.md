@@ -1,4 +1,4 @@
-## ViteVendu Payments Gateway
+## dfcu PayGat Payments Gateway
 
 Welcome to the lightweight Payments Gateway project at dfcu Bank. This README will help you get up and running, guide you through running the application and its tests, and illustrate how this solution fulfills the interview assignment requirements.
 
