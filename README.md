@@ -1,6 +1,6 @@
 ## ViteVendu Payments Gateway
 
-Welcome to the lightweight Payments Gateway project at dfcu Bank. This README will help you get up and running, and guide you through running the application and its tests.
+Welcome to the lightweight Payments Gateway project at dfcu Bank. This README will help you get up and running, guide you through running the application and its tests, and illustrate how this solution fulfills the interview assignment requirements.
 
 ---
 
@@ -16,7 +16,7 @@ my-app/
 └── infrastructure/     # Docker Compose setup for PostgreSQL
 ```
 
-The Gateway exposes two core APIs:
+The Gateway implements the two core APIs defined in the interview:
 
 1. **Payment Initiation API**
 
@@ -29,18 +29,29 @@ The Gateway exposes two core APIs:
      - `currency` (ISO code)
      - `payerReference` (optional narration)
 
+   - **Behavior**:
+
+     - Simulates processing outcomes with configurable probabilities:
+
+       - Pending: 10%
+       - Successful: 85%
+       - Failed: 5%
+
+     - Enforces a **minimum response time of 100 ms** on every request to mimic real-world latency.
+
    - **Response**:
 
      - `100 PENDING` – "Transaction Pending"
      - `200 SUCCESSFUL` – "Transaction successfully processed"
      - `400 FAILED` – "Transaction failed {error message}"
+     - Each response includes a unique transaction reference and descriptive message.
 
 2. **Payment Status Check API**
 
    - **Endpoint**: `GET /api/v1/payments/{transactionReference}`
-   - **Response**: Returns `PENDING` | `SUCCESSFUL` | `FAILED`
+   - **Response**: Returns the stored status (`PENDING` | `SUCCESSFUL` | `FAILED`) immediately. No artificial delay imposed.
 
-Additional endpoints are available for authentication, statistics, and listing transactions (see **API Endpoints** below).
+A simple Next.js client in `frontend/` demos consuming both APIs, allowing you to initiate payments and poll status.
 
 ---
 
@@ -55,15 +66,16 @@ my-app/
 │       ├── frontend-ci.yml
 │       └── frontend-cd.yml
 ├── backend/
-│   ├── src/           # NestJS application code
-│   ├── test/          # Unit & integration tests
+│   ├── src/           # NestJS application code (controllers, services, simulation logic)
+│   ├── test/          # Unit & integration tests covering all API behaviors
 │   └── ...
 ├── frontend/
-│   ├── app/         # Next.js pages
+│   ├── app/           # Next.js pages: initiate payment & status polling UI
 │   ├── components/    # Reusable React components
 │   └── ...
 └── infrastructure/
     ├── docker-compose.yml  # PostgreSQL service
+    └── .env.example        # Environment variable template
 ```
 
 ---
@@ -71,7 +83,7 @@ my-app/
 ## 🛠️ Prerequisites
 
 - **Node.js** v16+ and **npm**
-- **Docker** & **Docker Compose** (for PostgreSQL instance)
+- **Docker** & **Docker Compose** (for PostgreSQL)
 
 ---
 
@@ -88,7 +100,7 @@ my-app/
 
    ```bash
    cp ../infrastructure/.env.example .env
-   # Edit .env with your database credentials, JWT secrets, etc.
+   # Fill in DB connection, JWT secrets, etc.
    ```
 
 3. **Start application**
@@ -103,7 +115,7 @@ my-app/
    npm run test
    ```
 
-> 💡 Make sure you have a running PostgreSQL instance. You can spin one up in the `infrastructure/` directory:
+> 💡 To launch a local PostgreSQL instance:
 >
 > ```bash
 > cd my-app/infrastructure
@@ -125,7 +137,7 @@ my-app/
 
    ```bash
    cp ../infrastructure/.env.example .env
-   # Add API_BASE_URL and other required variables
+   # Set API_BASE_URL to backend URL
    ```
 
 3. **Start development server**
@@ -134,7 +146,7 @@ my-app/
    npm run dev
    ```
 
-Your frontend will be available at `http://localhost:3000`.
+Access the client at `http://localhost:3000` to initiate transactions and view statuses.
 
 ---
 
@@ -150,41 +162,53 @@ Your frontend will be available at `http://localhost:3000`.
 
 ### Payments
 
-| Method | Path                                      | Description                       |
-| ------ | ----------------------------------------- | --------------------------------- |
-| POST   | `/api/v1/payments`                        | Initiate a new payment            |
-| GET    | `/api/v1/payments`                        | List all payments (paginated)     |
-| GET    | `/api/v1/payments/stats`                  | Dashboard statistics              |
-| GET    | `/api/v1/payments/transactions`           | Recent transactions               |
-| GET    | `/api/v1/payments/{transactionReference}` | Check payment status by reference |
+| Method | Path                                      | Description                                                            |
+| ------ | ----------------------------------------- | ---------------------------------------------------------------------- |
+| POST   | `/api/v1/payments`                        | Initiate a new payment (with simulated latency and randomized outcome) |
+| GET    | `/api/v1/payments`                        | List all payments (paginated)                                          |
+| GET    | `/api/v1/payments/stats`                  | Dashboard statistics                                                   |
+| GET    | `/api/v1/payments/transactions`           | Recent transactions                                                    |
+| GET    | `/api/v1/payments/{transactionReference}` | Check payment status by transaction reference                          |
 
 ---
 
 ## 🛡️ Security & Best Practices
 
-- **Caching**: Currently using in-memory cache. Redis caching can be integrated in future iterations.
-- **Security Headers**: Helmet middleware for secure HTTP headers.
-- **Rate Limiting**: 100 requests per 15 minutes per IP.
+- **Caching**: In-memory cache (future Redis integration).
+- **Security Headers**: Helmet middleware.
+- **Rate Limiting**: 100 requests/15 min per IP.
 - **CORS**: Environment-based allowed origins.
-- **CSRF Protection**: `csurf` middleware enabled in production.
-- **Validation**: `forbidNonWhitelisted` to reject unexpected properties.
-- **HTTPS Enforcement**: Redirect HTTP to HTTPS in production.
-- **Request Size Limits**: JSON bodies limited to 100 KB.
-- **Environment Validation**: Mandatory config checks via `ConfigService`.
-- **API Documentation**: Swagger UI protected with API Key & JWT, enabled only in non-production.
-- **Error Handling**: Global exception filter to prevent leaking sensitive details.
-- **Authentication**: Supports API Key + JWT Bearer tokens.
-- **Throttling**: Built-in throttle guard in NestJS on critical routes.
+- **CSRF Protection**: `csurf` in production.
+- **Validation**: Reject unknown properties (`forbidNonWhitelisted`).
+- **HTTPS Enforcement**: HTTP-to-HTTPS redirect in production.
+- **Request Size Limits**: 100 KB JSON bodies.
+- **Env Validation**: Mandatory checks via `ConfigService`.
+- **Swagger**: Protected API docs (JWT), enabled only outside production.
+- **Error Handling**: Global exception filter.
+- **Authentication**: JWT Bearer.
+- **Throttling**: NestJS throttle guard on critical routes.
+
+---
+
+## 📋 Interview Assignment Compliance
+
+1. **Core APIs**: Implemented exactly as specified—initiation with correct params, status check by reference.
+2. **Simulation Rules**: Randomized outcomes (10% pending, 85% success, 5% failure) with enforced 100 ms min latency.
+3. **RDBMS Persistence**: Transactions stored/retrieved via PostgreSQL.
+4. **Client Demo**: Simple Next.js web app consuming both APIs (initiate + poll status).
+5. **Production-Grade Quality**: Comprehensive testing, security hardening (headers, rate limiting, CSRF), validation, and documentation.
+6. **Documentation & Deployment Guide**: This README, in-repo docs, and `.github/workflows` for CI/CD.
+7. **Public Repository**: All code committed here, ready for review or deployment.
 
 ---
 
 ## 🎉 Achievements
 
-- Proudly built a robust, secure, and scalable Payments Gateway in record time.
-- Leveraged NestJS best practices, including Guards, Interceptors, and Exception Filters.
-- Developed clear, maintainable TypeScript code on both client and server.
-- Implemented comprehensive testing strategy to ensure reliability.
+- Exceeded basic requirements with robust error handling, security, and organized code structure.
+- Delivered a clear, maintainable TypeScript codebase for both backend and frontend.
+- Ensured full test coverage for critical flows and edge cases.
+- Set up CI/CD pipelines for seamless integration and deployment.
 
 ---
 
-Thank you for exploring this project. We’re confident this Gateway sets a strong foundation for dfcu Bank's payment services!
+Thank you for reviewing this implementation. We’re proud of how this Gateway addresses the interview assignment and lays the groundwork for scalable payment services at dfcu Bank!
