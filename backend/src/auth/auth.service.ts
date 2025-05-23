@@ -54,6 +54,20 @@ export class AuthService {
     return result;
   }
 
+  async validateUser(email: string, password: string) {
+    try {
+      const user = await this.usersService.findOne(email);
+      if (!user) return null;
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) return null;
+      // Remove password from user object
+      const { password: _password, ...result } = user;
+      return result;
+    } catch (e) {
+      return null;
+    }
+  }
+
   private generateToken(user: User) {
     const payload = { sub: user.id, email: user.email };
 

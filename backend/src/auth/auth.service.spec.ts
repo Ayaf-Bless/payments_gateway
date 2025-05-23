@@ -96,6 +96,17 @@ describe('AuthService', () => {
       const mockUser = {
         id: 'user-id',
         email: 'test@example.com',
+        firstName: 'Test',
+        lastName: 'User',
+        phoneNumber: '1234567890',
+        address: '123 Main St',
+        currency: 'UGX',
+        payments: [],
+        accountNumber: '1234567890',
+        sentPayments: [],
+        receivedPayments: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
       jest.spyOn(authService, 'validateUser').mockResolvedValue(mockUser);

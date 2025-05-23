@@ -1,4 +1,4 @@
-import { Payment } from '@app/payments/entities/payment.entity';
+import { Payment } from '../../payments/entities/payment.entity';
 import { Exclude } from 'class-transformer';
 import {
   Column,
