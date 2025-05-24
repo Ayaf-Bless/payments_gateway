@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { Payment } from './entities/payment.entity';
 import { User } from '../users/entities/user.entity';
@@ -22,6 +22,7 @@ import {
   RecentTransactionDto,
 } from './dto/dashboard-stats.dto';
 import { InMemoryCacheService } from '../cache/in-memory-cache.service';
+import { DetByDateDto } from './dto/get-payment-status.dto';
 
 @Injectable()
 export class PaymentsService {
@@ -187,6 +188,17 @@ export class PaymentsService {
         userId,
       })
       .getOne();
+  }
+
+  async filterByDate(dto: DetByDateDto): Promise<Payment[]> {
+    const { startDate, endDate } = dto;
+
+    return this.paymentsRepository.find({
+      where: {
+        createdAt: Between(new Date(startDate), new Date(endDate)),
+      },
+      order: { createdAt: 'ASC' }, // optional: sort by date
+    });
   }
 
   async getPaymentStatus(

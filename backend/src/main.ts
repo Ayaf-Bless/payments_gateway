@@ -61,6 +61,7 @@ async function bootstrap() {
 
   // API prefix and versioning
   app.setGlobalPrefix('api/v1');
+  console.log(new Date());
 
   // Swagger configuration (only in non-production)
   if (configService.get('NODE_ENV') !== 'production') {
