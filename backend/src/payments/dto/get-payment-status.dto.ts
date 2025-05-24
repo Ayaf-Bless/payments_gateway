@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 export class GetPaymentStatusDto {
   @ApiProperty({
@@ -10,4 +10,12 @@ export class GetPaymentStatusDto {
   @IsString()
   @IsUUID()
   transactionRef: string;
+}
+
+export class DetByDateDto {
+  @IsDateString()
+  startDate: string;
+
+  @IsDateString()
+  endDate: string;
 }

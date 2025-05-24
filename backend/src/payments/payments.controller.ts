@@ -33,6 +33,7 @@ import {
 } from './dto/dashboard-stats.dto';
 import { Payment } from './entities/payment.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { DetByDateDto } from './dto/get-payment-status.dto';
 
 @ApiTags('payments')
 @Controller('payments')
@@ -92,6 +93,11 @@ export class PaymentsController {
   })
   async getAllPayments(@Query() paginationDto: PaginationDto, @Req() req) {
     return this.paymentsService.getAllPayments(req.user.sub, paginationDto);
+  }
+
+  @Get('by-date-range')
+  async filterByDateRange(@Query() dto: DetByDateDto) {
+    return this.paymentsService.filterByDate(dto);
   }
 
   @Get('stats')
